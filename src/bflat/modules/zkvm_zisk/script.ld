@@ -12,9 +12,13 @@ ENTRY(_start)
 
 MEMORY {
   /* biosrom (xa) : ORIGIN = 0x00001000, LENGTH = 0x1000 */
-  rom   (xa) : ORIGIN = 0x80000000, LENGTH = 0x10000000
   /*
-   * Zisk RAM map (zisk/core/src/mem.rs, v1.3):
+   * ZisK 1.4 ROM (zisk/core/src/mem.rs): ROM_ADDR = 0x90000000, 128 MiB. The
+   * top 2 MiB hold the ZisK library ROM and the float library ROM.
+   */
+  rom   (xa) : ORIGIN = 0x90000000, LENGTH = 0x07e00000
+  /*
+   * Zisk RAM map (zisk/core/src/mem.rs, v1.4):
    *   RAM_ADDR            = 0xa0000000   program stack, STACK_SIZE = 4 MiB
    *   SYS_ADDR            = 0xa0400000   registers, UART, DMA params, CSRs
    *   OUTPUT_ADDR         = 0xa0410000   public output, OUTPUT_MAX_SIZE 128 KiB
@@ -137,7 +141,7 @@ SECTIONS
      * __cxa_atexit(fn, arg, &__dso_handle). Nothing defines __dso_handle in
      * this fully custom link (no crtbegin.o), so lld synthesizes it at the
      * image base (VA 0) - out of PCREL_HI20 range (>2GiB) from code at
-     * 0x8xxxxxxx. It is only an opaque DSO token, never dereferenced by
+     * 0x9xxxxxxx. It is only an opaque DSO token, never dereferenced by
      * musl's __cxa_atexit, so any in-range address works; give it 8 bytes
      * of real storage here. */
     PROVIDE_HIDDEN(__dso_handle = .);
